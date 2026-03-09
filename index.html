@@ -252,9 +252,6 @@
   </header>
 
   <div class="pixel-box">
-    <div style="text-align:center;margin-bottom:14px">
-      <span class="demo-badge">🔥 DEMO MODE — SAMPLE RECIPES ACTIVE 🔥</span>
-    </div>
     <div class="section-label">WHAT ARE WE ATTEMPTING TO COOK?</div>
     <input class="meal-input" id="mealInput" type="text"
       placeholder="pasta, tacos, anything..." maxlength="80" autocomplete="off">
@@ -304,7 +301,7 @@
     <div class="pixel-box" style="text-align:center;padding:32px 20px">
       <div style="font-size:clamp(11px,2.5vw,16px);color:var(--sun);text-shadow:3px 3px 0 var(--orange);margin-bottom:6px;letter-spacing:2px">🔥 BURNT DAD MERCH 🔥</div>
       <div style="font-family:'VT323',monospace;font-size:18px;color:#c0a080;margin-bottom:24px;line-height:1.6">
-        Wear the shame. Share the chaos.<br>Art by a guy in a metal band who gets it.
+        Wear the shame. Share the chaos.<br>Art by dads after doing the dishes.
       </div>
 
       <div class="merch-grid">
@@ -356,7 +353,7 @@
       </div>
 
       <div style="margin-top:24px;font-family:'VT323',monospace;font-size:16px;color:#806040;line-height:1.8">
-        Art by our friend in a metal band who somehow also understands dads.<br>
+        Art by dads after doing the dishes.<br>
         Merch ships when we stop burning things long enough to fulfill orders.
       </div>
     </div>
@@ -811,7 +808,7 @@ Respond ONLY with valid JSON, no markdown:
 {"name":"","description":"","difficulty":"${selectedDiff}","time_minutes":0,"servings":${servings},"allergen_warnings":"","ingredients":[{"amount":"","item":""}],"steps":[{"instruction":"","timer_seconds":0}],"fun_tip":"","cookbook_teaser":""}
 Rules: steps simple and safe for kids; easy=minimal knife work; be encouraging and fun.`;
 
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
+    const res = await fetch('/api/recipe', {
       method:'POST', headers:{'Content-Type':'application/json'},
       body: JSON.stringify({ model:'claude-sonnet-4-20250514', max_tokens:1000, messages:[{role:'user',content:prompt}] })
     });
