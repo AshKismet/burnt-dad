@@ -1,5 +1,9 @@
 import { redirect } from "next/navigation";
 
 export default function Home() {
-  redirect("/index.html");
+  if (process.env.COMING_SOON === "true") {
+    return <p>Coming soon</p>;
+  }
+
+  redirect("/home");
 }
