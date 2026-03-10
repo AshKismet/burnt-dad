@@ -1,3 +1,5 @@
+import { NextResponse } from "next/server";
+
 export async function POST(request: Request) {
   try {
     const body = await request.json();
@@ -13,8 +15,8 @@ export async function POST(request: Request) {
     });
 
     const data = await response.json();
-    return Response.json(data);
+    return NextResponse.json(data, { status: response.status });
   } catch {
-    return Response.json({ error: "Recipe fetch failed" }, { status: 500 });
+    return NextResponse.json({ error: "Recipe fetch failed" }, { status: 500 });
   }
 }
