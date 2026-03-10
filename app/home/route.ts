@@ -1,10 +1,8 @@
-import { readFileSync } from "fs";
-import { join } from "path";
 import { NextResponse } from "next/server";
+import { homeHtml } from "../home-content";
 
 export function GET() {
-  const html = readFileSync(join(process.cwd(), "app", "home.html"), "utf-8");
-  return new NextResponse(html, {
+  return new NextResponse(homeHtml, {
     headers: { "Content-Type": "text/html" },
   });
 }
