@@ -801,6 +801,9 @@ async function getRecipe() {
   // Try real API first; if it fails, use demo
   let recipe = null;
   try {
+    // Throw so we don't use the LLM
+    throw new Error('Test error');
+
     const allergyNote = selectedAllergies.length ? `Must be: ${selectedAllergies.join(', ')}.` : '';
     const prompt = `You are Magic Sun Kitchen, a fun cooking app for kids of all ages.
 Generate a ${selectedDiff} difficulty recipe for: "${meal}". Servings: ${servings}. ${allergyNote}
