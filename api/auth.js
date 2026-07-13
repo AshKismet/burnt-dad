@@ -1,8 +1,11 @@
 const Anthropic = require('@anthropic-ai/sdk');
+const ws = require('ws');
 const { createClient } = require('@supabase/supabase-js');
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
-const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_ANON_KEY);
+const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_ANON_KEY, {
+  realtime: { transport: ws }
+});
 
 const rateLimitStore = {};
 
