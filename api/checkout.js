@@ -43,7 +43,7 @@ module.exports = async (req, res) => {
             currency: 'usd',
             product_data: {
               name: 'Burnt Dad',
-              description: '100 AI-generated recipes. Feed the dad.',
+              description: '100 Immediate and Incredible Recipes. Feed the dad.',
             },
             unit_amount: PRICE_CENTS
           },
