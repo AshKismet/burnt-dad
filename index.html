@@ -63,17 +63,23 @@ radial-gradient(1px 1px at 75% 85%, #FF6600 0%, transparent 100%);
 
 /* TOKEN BAR */
 .token-bar {
-background: var(--panel); border-bottom: 2px solid var(--orange);
-padding: 8px 16px; display: flex; align-items: center; justify-content: space-between;
-font-size: 7px; position: sticky; top: 0; z-index: 100;
+background: var(--panel); border-bottom: 3px solid var(--orange);
+padding: 10px 18px; min-height: 56px; display: flex; align-items: center; justify-content: space-between; gap: 12px;
+font-size: 10px; position: sticky; top: 0; z-index: 100; box-shadow: 0 3px 0 rgba(0,0,0,0.4);
 }
-.token-count { color: var(--sun); }
+.token-count { color: var(--sun); font-size: 11px; letter-spacing: 1px; text-shadow: 2px 2px 0 rgba(0,0,0,0.45); }
 .token-count span { color: var(--white); }
-.token-login-btn { font-family: 'Press Start 2P', monospace; font-size: 6px; padding: 5px 10px; background: transparent; border: 2px solid var(--teal); color: var(--teal); cursor: pointer; }
+.token-actions { display: flex; gap: 10px; }
+.token-login-btn, .dad-van-btn { font-family: 'Press Start 2P', monospace; font-size: 9px; line-height: 1; padding: 10px 12px; background: transparent; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; }
+.token-login-btn { border: 2px solid var(--teal); color: var(--teal); }
 .token-login-btn:hover { background: var(--teal); color: var(--bg); }
-.dad-van-btn { font-family: 'Press Start 2P', monospace; font-size: 6px; padding: 5px 10px; background: transparent; border: 2px solid var(--sun); color: var(--sun); cursor: pointer; position: relative; }
+.dad-van-btn { border: 2px solid var(--sun); color: var(--sun); position: relative; }
 .dad-van-btn:hover { background: var(--sun); color: var(--bg); }
-.van-count { position: absolute; top: -6px; right: -6px; background: var(--red); color: white; font-size: 6px; width: 14px; height: 14px; display: flex; align-items: center; justify-content: center; border-radius: 0; }
+.btn-icon { flex-shrink: 0; display: block; image-rendering: pixelated; }
+.icon-env { width: 20px; height: 15px; }
+.icon-van { width: 32px; height: 19px; }
+.van-count { position: absolute; top: -8px; right: -8px; background: var(--red); color: white; font-size: 7px; width: 16px; height: 16px; display: flex; align-items: center; justify-content: center; border-radius: 0; }
+@media(max-width:580px){ .token-bar{font-size:8px;} .token-count{font-size:9px;} .token-login-btn,.dad-van-btn{font-size:7px;padding:9px 9px;} }
 
 .app { position: relative; z-index: 2; max-width: 900px; margin: 0 auto; padding: 20px 16px 60px; }
 
@@ -257,9 +263,38 @@ footer a:hover { color:var(--teal); }
 <!-- TOKEN BAR -->
 <div class="token-bar">
   <div class="token-count">🔥 RECIPES LEFT: <span id="tokenDisplay">10</span></div>
-  <div style="display:flex;gap:8px">
-    <button class="dad-van-btn" onclick="openDadVan()">🚐 DAD VAN <span class="van-count" id="vanCount" style="display:none">0</span></button>
-    <button class="token-login-btn" id="loginToggleBtn" onclick="openLoginModal()">SAVE TOKENS</button>
+  <div class="token-actions">
+    <button class="dad-van-btn" onclick="openDadVan()">
+      <svg class="btn-icon icon-van" viewBox="0 0 30 18" shape-rendering="crispEdges" aria-hidden="true">
+        <!-- body: dark outline, base, top highlight + bottom shadow bands -->
+        <rect x="2" y="2" width="26" height="11" fill="#0b3315"/>
+        <rect x="3" y="3" width="24" height="9" fill="#1b5e20"/>
+        <rect x="3" y="3" width="24" height="2" fill="#2e7d32"/>
+        <rect x="3" y="10" width="24" height="2" fill="#0f421c"/>
+        <!-- retro side accent stripe -->
+        <rect x="11" y="7" width="16" height="1" fill="#43a047"/>
+        <!-- rear door seam -->
+        <rect x="14" y="5" width="1" height="5" fill="#0b3315"/>
+        <!-- windshield: dark frame + light glass -->
+        <rect x="4" y="4" width="7" height="4" fill="#082a11"/>
+        <rect x="5" y="5" width="5" height="2" fill="#9fd8ff"/>
+        <!-- headlight -->
+        <rect x="3" y="9" width="2" height="1" fill="#ffd93d"/>
+        <!-- tires (chunky) + hubs -->
+        <rect x="6" y="12" width="6" height="5" fill="#0a0400"/>
+        <rect x="8" y="14" width="2" height="2" fill="#6b6b6b"/>
+        <rect x="18" y="12" width="6" height="5" fill="#0a0400"/>
+        <rect x="20" y="14" width="2" height="2" fill="#6b6b6b"/>
+      </svg>
+      DAD VAN <span class="van-count" id="vanCount" style="display:none">0</span>
+    </button>
+    <button class="token-login-btn" id="loginToggleBtn" onclick="openLoginModal()">
+      <svg class="btn-icon icon-env" viewBox="0 0 20 15" shape-rendering="crispEdges" aria-hidden="true">
+        <rect x="1" y="1" width="18" height="13" fill="none" stroke="currentColor" stroke-width="2"/>
+        <path d="M2 2 L10 8 L18 2" fill="none" stroke="currentColor" stroke-width="2"/>
+      </svg>
+      SAVE TOKENS
+    </button>
   </div>
 </div>
 
