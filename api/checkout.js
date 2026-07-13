@@ -49,11 +49,11 @@ module.exports = async (req, res) => {
           },
           quantity: 1
         }],
-        mode: 'payment',
-        customer_email: email,
-        success_url: `https://burntdad.com/?purchase=success&email=${encodeURIComponent(email || '')}`,
-        cancel_url: 'https://burntdad.com/?purchase=cancelled',
-        metadata: { email: email || '' }
+    mode: 'payment',
+    customer_email: email || undefined,
+    success_url: `https://burntdad.com/?purchase=success&email=${encodeURIComponent(email || '')}`,
+    cancel_url: 'https://burntdad.com/?purchase=cancelled',
+    metadata: { email: email || '' }
       });
       return res.redirect(303, session.url);
     } catch(e) {
