@@ -1,9 +1,11 @@
 const Stripe = require('stripe');
+const ws = require('ws');
 const { createClient } = require('@supabase/supabase-js');
 
 const stripe = Stripe(process.env.STRIPE_SECRET_KEY);
-const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_ANON_KEY);
-
+const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_ANON_KEY, {
+  realtime: { transport: ws }
+});
 const TOKENS_PER_PACK = 100;
 const PRICE_CENTS = 299;
 
