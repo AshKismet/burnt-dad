@@ -687,6 +687,10 @@ function renderRecipe(r) {
         <div class="nc-title">${r.name}</div>
         <div class="nc-divider"></div>
         <div class="nc-desc">${r.description}</div>
+        <div class="nc-action-row">
+          <button class="nc-amazon-btn" onclick="shopIngredients()">SHOP INGREDIENTS ON AMAZON</button>
+          <button class="nc-van-add-btn" id="vanAddBtn" onclick="addToDadVan(currentRecipe)">ADD TO DAD VAN 🚐</button>
+        </div>
         <div class="nc-badges">
           ${diffBadge}
           <span class="nc-badge nc-badge-time">⏱ ${r.time_minutes} min</span>
@@ -714,10 +718,6 @@ function renderRecipe(r) {
           <div class="nc-tip-text">${r.fun_tip}</div>
         </div>
         ${r.cookbook_teaser ? `<div class="nc-teaser">📚 ${r.cookbook_teaser}</div>` : ''}
-        <div class="nc-action-row">
-          <button class="nc-amazon-btn" onclick="shopIngredients()">SHOP INGREDIENTS ON AMAZON</button>
-          <button class="nc-van-add-btn" id="vanAddBtn" onclick="addToDadVan(currentRecipe)">ADD TO DAD VAN 🚐</button>
-        </div>
         <div class="nc-footer">Burnt Dad · A Magic Sun LLC Production · burntdad.com</div>
       </div>
     </div>`;
