@@ -10,7 +10,7 @@
 //   magic_tokens ( token text primary key, email text, expires_at timestamptz, used boolean )
 //   users        ( email text primary key, token_balance int )
 //
-// Required env: SUPABASE_URL, SUPABASE_ANON_KEY, RESEND_API_KEY
+// Required env: SUPABASE_URL, SUPABASE_SERVICE_KEY, RESEND_API_KEY
 // Optional env: MAGIC_LINK_FROM, SITE_URL
 
 const crypto = require('crypto');
@@ -19,7 +19,7 @@ const ws = require('ws');
 const { createClient } = require('@supabase/supabase-js');
 const { Resend } = require('resend');
 
-const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_ANON_KEY, {
+const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_KEY, {
   realtime: { transport: ws }
 });
 const resend = new Resend(process.env.RESEND_API_KEY);
