@@ -786,9 +786,8 @@ function renderRecipe(r) {
 
 function shopIngredients() {
   if (!currentRecipe) return;
-  currentRecipe.ingredients.forEach(ing => {
-    window.open(`https://www.amazon.com/s?k=${encodeURIComponent(ing.item)}&tag=${AMAZON_TAG}`, '_blank');
-  });
+  const query = currentRecipe.ingredients.map(ing => ing.item).join(' ');
+  window.open(`https://www.amazon.com/s?k=${encodeURIComponent(query)}&tag=${AMAZON_TAG}`, '_blank');
 }
 
 function renderIngredientsHTML(ingredients) {
