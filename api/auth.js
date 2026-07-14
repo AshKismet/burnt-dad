@@ -128,7 +128,7 @@ module.exports = async (req, res) => {
       .insert({ token, email, expires_at: expiresAt, used: false });
     if (insertError) {
       console.error('magic_tokens insert error:', insertError.message);
-      return res.status(500).json({ error: 'db_error' });
+      return res.status(500).json({ error: 'db_error', detail: insertError.message }); // TEMP: remove after debugging
     }
 
     const link = `${SITE_URL}/api/auth?token=${token}`;
