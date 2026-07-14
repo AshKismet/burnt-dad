@@ -293,7 +293,7 @@ footer a:hover { color:var(--teal); }
         <rect x="1" y="1" width="18" height="13" fill="none" stroke="currentColor" stroke-width="2"/>
         <path d="M2 2 L10 8 L18 2" fill="none" stroke="currentColor" stroke-width="2"/>
       </svg>
-      SAVE TOKENS
+      <span id="loginBtnLabel">SAVE TOKENS</span>
     </button>
   </div>
 </div>
@@ -469,8 +469,34 @@ function saveState() {
 function updateTokenDisplay() {
   const el = document.getElementById('tokenDisplay');
   if (el) el.textContent = tokenBalance <= 0 ? 'OUT' : tokenBalance;
-  const loginBtn = document.getElementById('loginToggleBtn');
-  if (loginBtn && userEmail) loginBtn.textContent = userEmail.split('@')[0];
+  const loginLabel = document.getElementById('loginBtnLabel');
+  if (loginLabel && userEmail) loginLabel.textContent = userEmail.split('@')[0];
+}
+
+// Handle the redirect back from a magic link: /?login=success&email=...
+function handleLoginRedirect() {
+  const params = new URLSearchParams(window.location.search);
+  const status = params.get('login');
+  if (!status) return;
+
+  if (status === 'success') {
+    const email = params.get('email');
+    if (email) {
+      userEmail = email;
+      localStorage.setItem('bd_email', email);
+      saveState();
+      updateTokenDisplay();
+      closeLoginModal();
+      const sent = document.getElementById('loginSent');
+      if (sent) sent.style.display = 'none';
+    }
+  }
+
+  // Strip the login params so a refresh doesn't re-trigger this.
+  params.delete('login');
+  params.delete('email');
+  const query = params.toString();
+  history.replaceState({}, document.title, window.location.pathname + (query ? '?' + query : ''));
 }
 
 function updateVanCount() {
@@ -951,6 +977,7 @@ function drawMerchArt() {
 
 window.addEventListener('load', () => {
   drawMerchArt();
+  handleLoginRedirect();
   updateTokenDisplay();
   updateVanCount();
 });
