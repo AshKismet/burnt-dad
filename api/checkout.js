@@ -35,7 +35,7 @@ module.exports = async (req, res) => {
 
     if (event.type === 'checkout.session.completed') {
       const session = event.data.object;
-      const email = session.customer_email || session.metadata?.email;
+      const email = session.customer_details?.email || session.metadata?.email || null;
       if (email) {
         const { data: user } = await supabase.from('users').select('token_balance').eq('email', email).single();
         const currentBalance = user?.token_balance || 0;
