@@ -618,9 +618,6 @@ function renderDadVan() {
   const ingredientsHTML = ingredients.map(ing =>
     `<li>${ing.amounts.length ? ing.amounts.join(' + ') + ' ' : ''}${ing.item}</li>`
   ).join('');
-  const amazonLinks = ingredients.map(ing =>
-    `https://www.amazon.com/s?k=${encodeURIComponent(ing.item)}&tag=${AMAZON_TAG}`
-  );
   el.innerHTML = `
     <div>${recipesHTML}</div>
     <hr class="van-divider">
@@ -631,10 +628,9 @@ function renderDadVan() {
 }
 function orderOnAmazon() {
   const ingredients = coalateIngredients();
-  ingredients.forEach(ing => {
-    const url = `https://www.amazon.com/s?k=${encodeURIComponent(ing.item)}&tag=${AMAZON_TAG}`;
-    window.open(url, '_blank');
-  });
+  if (!ingredients.length) return;
+  const query = ingredients.map(ing => ing.item).join(' ');
+  window.open(`https://www.amazon.com/s?k=${encodeURIComponent(query)}&tag=${AMAZON_TAG}`, '_blank');
 }
 function printShoppingList() {
   const ingredients = coalateIngredients();
