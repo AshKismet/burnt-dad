@@ -474,11 +474,13 @@ function updateTokenDisplay() {
 }
 
 // Handle the redirect back from a magic link: /?login=success&email=...
+// Returns true if it handled a successful login (and already kicked off a token sync).
 function handleLoginRedirect() {
   const params = new URLSearchParams(window.location.search);
   const status = params.get('login');
-  if (!status) return;
+  if (!status) return false;
 
+  let handledLogin = false;
   if (status === 'success') {
     const email = params.get('email');
     if (email) {
@@ -489,6 +491,8 @@ function handleLoginRedirect() {
       closeLoginModal();
       const sent = document.getElementById('loginSent');
       if (sent) sent.style.display = 'none';
+      syncTokenBalance(email);
+      handledLogin = true;
     }
   }
 
@@ -497,6 +501,21 @@ function handleLoginRedirect() {
   params.delete('email');
   const query = params.toString();
   history.replaceState({}, document.title, window.location.pathname + (query ? '?' + query : ''));
+  return handledLogin;
+}
+
+// Pull the authoritative token balance from Supabase and store it locally.
+async function syncTokenBalance(email) {
+  try {
+    const res = await fetch(`/api/tokens?email=${encodeURIComponent(email)}`);
+    if (!res.ok) return;
+    const data = await res.json();
+    if (typeof data.token_balance === 'number') {
+      tokenBalance = data.token_balance;
+      localStorage.setItem('bd_tokens', tokenBalance);
+      updateTokenDisplay();
+    }
+  } catch (e) {}
 }
 
 function updateVanCount() {
@@ -972,7 +991,9 @@ function drawMerchArt() {
 
 window.addEventListener('load', () => {
   drawMerchArt();
-  handleLoginRedirect();
+  const handledLogin = handleLoginRedirect();
+  // For a returning visitor (email already stored), refresh the balance from Supabase.
+  if (!handledLogin && userEmail) syncTokenBalance(userEmail);
   updateTokenDisplay();
   updateVanCount();
 });
