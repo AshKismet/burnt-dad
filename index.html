@@ -227,9 +227,12 @@ header { text-align: center; padding: 8px 0 28px; }
 .van-divider { border:none; border-top:2px solid rgba(255,140,0,0.2); margin:16px 0; }
 .van-shopping-title { font-size:8px; color:var(--teal); margin-bottom:12px; }
 .van-ingredient-list { list-style:none; margin-bottom:16px; }
-.van-ingredient-list li { font-family:'VT323',monospace; font-size:17px; color:var(--white); padding:4px 0; border-bottom:1px solid rgba(255,255,255,0.05); }
-.van-order-btn { width:100%; font-family:'Press Start 2P',monospace; font-size:8px; padding:14px; background:#FF9900; color:#000; border:none; cursor:pointer; margin-bottom:10px; }
-.van-order-btn:hover { background:#FFAD33; }
+.van-ingredient-list li { border-bottom:1px solid rgba(255,255,255,0.05); }
+.van-ing-link { display:flex; justify-content:space-between; align-items:center; gap:10px; text-decoration:none; font-family:'VT323',monospace; font-size:17px; color:var(--white); padding:6px 4px; transition:color .15s ease, background .15s ease; }
+.van-ing-link:hover { color:#FFAD33; background:rgba(255,153,0,0.08); }
+.van-ing-cart { font-size:11px; color:var(--sun); opacity:0.45; flex-shrink:0; }
+.van-ing-link:hover .van-ing-cart { opacity:1; }
+.van-shop-hint { font-family:'VT323',monospace; font-size:14px; color:var(--ink-muted,#7a6450); margin:-6px 0 12px; letter-spacing:1px; }
 .van-print-btn { width:100%; font-family:'Press Start 2P',monospace; font-size:7px; padding:12px; background:transparent; border:2px solid var(--white); color:var(--white); cursor:pointer; }
 .van-print-btn:hover { background:var(--white); color:var(--bg); }
 
@@ -635,23 +638,18 @@ function renderDadVan() {
       <button class="van-recipe-remove" onclick="removeFromVan('${r.name.replace(/'/g,"\\'")}')">✕</button>
       <div class="van-recipe-name">${r.name}</div>
     </div>`).join('');
-  const ingredientsHTML = ingredients.map(ing =>
-    `<li>${ing.amounts.length ? ing.amounts.join(' + ') + ' ' : ''}${ing.item}</li>`
-  ).join('');
+  const ingredientsHTML = ingredients.map(ing => {
+    const amount = ing.amounts.length ? ing.amounts.join(' + ') + ' ' : '';
+    const url = `https://www.amazon.com/s?k=${encodeURIComponent(ing.item)}&tag=${AMAZON_TAG}`;
+    return `<li><a class="van-ing-link" href="${url}" target="_blank" rel="noopener"><span>${amount}${ing.item}</span><span class="van-ing-cart">🛒</span></a></li>`;
+  }).join('');
   el.innerHTML = `
     <div>${recipesHTML}</div>
     <hr class="van-divider">
     <div class="van-shopping-title">SHOPPING LIST (${ingredients.length} ITEMS)</div>
+    <div class="van-shop-hint">↗ TAP AN ITEM TO SHOP ON AMAZON</div>
     <ul class="van-ingredient-list">${ingredientsHTML}</ul>
-    <button class="van-order-btn" onclick="orderOnAmazon()">ORDER ON AMAZON</button>
     <button class="van-print-btn" onclick="printShoppingList()">PRINT LIST</button>`;
-}
-function orderOnAmazon() {
-  const ingredients = coalateIngredients();
-  ingredients.forEach(ing => {
-    const url = `https://www.amazon.com/s?k=${encodeURIComponent(ing.item)}&tag=${AMAZON_TAG}`;
-    window.open(url, '_blank');
-  });
 }
 function printShoppingList() {
   const ingredients = coalateIngredients();
