@@ -36,12 +36,10 @@ module.exports = async (req, res) => {
     if (event.type === 'checkout.session.completed') {
       const session = event.data.object;
       const email = session.customer_details?.email || session.metadata?.email || null;
-      console.log('checkout webhook email:', email);
       if (email) {
         const { data: user } = await supabase.from('users').select('token_balance').eq('email', email).single();
         const currentBalance = user?.token_balance || 0;
-        const upsertResult = await supabase.from('users').upsert({ email, token_balance: currentBalance + TOKENS_PER_PACK });
-        console.log('checkout webhook upsert result:', JSON.stringify(upsertResult));
+        await supabase.from('users').upsert({ email, token_balance: currentBalance + TOKENS_PER_PACK });
       }
     }
     return res.status(200).json({ received: true });
