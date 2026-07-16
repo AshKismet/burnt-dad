@@ -648,9 +648,10 @@ function renderDadVan() {
 }
 function orderOnAmazon() {
   const ingredients = coalateIngredients();
-  if (!ingredients.length) return;
-  const query = ingredients.map(ing => ing.item).join(' ');
-  window.open(`https://www.amazon.com/s?k=${encodeURIComponent(query)}&tag=${AMAZON_TAG}`, '_blank');
+  ingredients.forEach(ing => {
+    const url = `https://www.amazon.com/s?k=${encodeURIComponent(ing.item)}&tag=${AMAZON_TAG}`;
+    window.open(url, '_blank');
+  });
 }
 function printShoppingList() {
   const ingredients = coalateIngredients();
@@ -692,21 +693,15 @@ async function getRecipe() {
 
   let recipe = null;
   try {
-    const allergyNote = selectedAllergies.length ? `Must be: ${selectedAllergies.join(', ')}.` : '';
-    const prompt = `You are Burnt Dad Kitchen, a fun cooking app for kids and dads of all kinds.
-Generate a ${selectedDiff} difficulty recipe for: "${meal}". Servings: ${servings}. ${allergyNote}
-Respond ONLY with valid JSON, no markdown:
-{"name":"","description":"","difficulty":"${selectedDiff}","time_minutes":0,"servings":${servings},"allergen_warnings":"","ingredients":[{"amount":"","item":""}],"steps":[{"instruction":"","timer_seconds":0}],"fun_tip":"","cookbook_teaser":""}
-Rules: steps simple and safe for kids; easy means minimal knife work; be encouraging, warm, and a little funny.`;
-
     const res = await fetch('/api/recipe', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ prompt, email: userEmail })
+      body: JSON.stringify({ meal, servings, difficulty: selectedDiff, allergies: selectedAllergies, email: userEmail })
     });
     const data = await res.json();
     if (data.error === 'rate_limited') { alert("Dad needs a break. Try again in an hour."); document.getElementById('cookBtn').disabled = false; return; }
     if (data.error === 'no_tokens') { openPaywall(); document.getElementById('cookBtn').disabled = false; return; }
+    if (data.error === 'invalid_input') { alert(data.message || "That doesn't look like a meal. Try a dish name."); document.getElementById('cookBtn').disabled = false; return; }
     const text = (data.content || []).map(b => b.text || '').join('');
     recipe = JSON.parse(text.replace(/```json|```/g, '').trim());
   } catch(e) {
@@ -802,8 +797,9 @@ function renderRecipe(r) {
 
 function shopIngredients() {
   if (!currentRecipe) return;
-  const query = currentRecipe.ingredients.map(ing => ing.item).join(' ');
-  window.open(`https://www.amazon.com/s?k=${encodeURIComponent(query)}&tag=${AMAZON_TAG}`, '_blank');
+  currentRecipe.ingredients.forEach(ing => {
+    window.open(`https://www.amazon.com/s?k=${encodeURIComponent(ing.item)}&tag=${AMAZON_TAG}`, '_blank');
+  });
 }
 
 function renderIngredientsHTML(ingredients) {
