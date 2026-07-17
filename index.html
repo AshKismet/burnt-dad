@@ -246,6 +246,7 @@ header { text-align: center; padding: 8px 0 28px; }
 .merch-item { background:rgba(0,0,0,0.3); border:2px solid rgba(255,140,0,0.25); padding:16px 12px; text-align:center; transition:border-color 0.2s; }
 .merch-item:hover { border-color:var(--orange); }
 .merch-art { margin-bottom:10px; display:flex; justify-content:center; align-items:center; height:90px; }
+.merch-thumb { max-width:100%; max-height:90px; object-fit:contain; }
 .merch-name { font-size:8px; color:var(--sun); letter-spacing:2px; margin-bottom:6px; }
 .merch-desc { font-family:'VT323',monospace; font-size:15px; color:#a08060; line-height:1.5; margin-bottom:8px; }
 .merch-price { font-family:'Playfair Display',serif; font-size:20px; font-weight:700; color:var(--white); margin-bottom:10px; }
@@ -371,7 +372,7 @@ footer a:hover { color:var(--teal); }
     <div style="font-family:'VT323',monospace;font-size:18px;color:#c0a080;margin-bottom:24px;line-height:1.6">
       Wear the shame. Share the chaos.<br>Art by dads after doing the dishes.
     </div>
-    <div class="merch-grid">
+    <div class="merch-grid" id="merchGrid">
       <div class="merch-item">
         <div class="merch-art"><canvas id="shirt1" width="80" height="80" style="width:80px;height:80px;image-rendering:pixelated"></canvas></div>
         <div class="merch-name">THE CLASSIC</div>
@@ -882,6 +883,54 @@ function merchNotify(item) {
     }
   });
 }
+
+// ══════════════════════════════════════════════════════════════════
+// MERCH (Printful)
+// ══════════════════════════════════════════════════════════════════
+// Base URL of the Magic Sun Quick Store. When set, each product's page is
+// QUICK_STORE_BASE + product.id and buttons become real BUY NOW links.
+// Leave empty to keep the coming-soon placeholder.
+const QUICK_STORE_BASE = '';
+
+function escapeHtml(str) {
+  return String(str).replace(/[&<>"']/g, c => (
+    { '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]
+  ));
+}
+
+function openMerchProduct(id) {
+  if (QUICK_STORE_BASE) {
+    window.open(`${QUICK_STORE_BASE}${id}`, '_blank', 'noopener');
+  } else {
+    alert('Coming soon - follow us on Instagram @burntdadkitchen');
+  }
+}
+
+async function loadMerch() {
+  const grid = document.getElementById('merchGrid');
+  if (!grid) return;
+  try {
+    const res = await fetch('/api/products');
+    if (!res.ok) return;                          // keep the placeholder grid
+    const data = await res.json();
+    const products = Array.isArray(data.products) ? data.products : [];
+    if (!products.length) return;                 // keep the placeholder grid
+
+    const label = QUICK_STORE_BASE ? 'BUY NOW' : 'NOTIFY ME';
+    grid.innerHTML = products.map(p => {
+      const name = escapeHtml(p.name || 'Burnt Dad Merch');
+      const thumb = p.thumbnail_url
+        ? `<img src="${encodeURI(p.thumbnail_url)}" alt="${name}" class="merch-thumb" loading="lazy">`
+        : '';
+      return `
+        <div class="merch-item">
+          <div class="merch-art">${thumb}</div>
+          <div class="merch-name">${name}</div>
+          <button class="merch-btn" onclick="openMerchProduct('${p.id}')">${label}</button>
+        </div>`;
+    }).join('');
+  } catch (e) {}
+}
 document.getElementById('mealInput').addEventListener('keydown', e => { if(e.key==='Enter') getRecipe(); });
 
 // Close modals on overlay click
@@ -986,6 +1035,7 @@ function drawMerchArt() {
 
 window.addEventListener('load', () => {
   drawMerchArt();
+  loadMerch();
   const handledLogin = handleLoginRedirect();
   // For a returning visitor (email already stored), refresh the balance from Supabase.
   if (!handledLogin && userEmail) syncTokenBalance(userEmail);
