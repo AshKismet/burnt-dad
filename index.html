@@ -81,6 +81,11 @@ font-size: 10px; position: sticky; top: 0; z-index: 100; box-shadow: 0 3px 0 rgb
 .icon-van { width: 32px; height: 19px; }
 .icon-pencil { width: 20px; height: 20px; }
 .van-count { position: absolute; top: -8px; right: -8px; background: var(--red); color: white; font-size: 7px; width: 16px; height: 16px; display: flex; align-items: center; justify-content: center; border-radius: 0; }
+.token-logout-btn { font-family: 'Press Start 2P', monospace; font-size: 7px; line-height: 1; padding: 9px 9px; background: transparent; border: 2px solid var(--red); color: var(--red); cursor: pointer; }
+.token-logout-btn:hover { background: var(--red); color: var(--bg); }
+/* PURCHASE SUCCESS BANNER */
+.purchase-banner { display: none; text-align: center; font-family: 'Press Start 2P', monospace; font-size: 9px; line-height: 1.9; letter-spacing: 1px; color: #06240d; background: var(--green); border-bottom: 3px solid #2d5a1b; padding: 14px 16px; box-shadow: 0 3px 0 rgba(0,0,0,0.4); position: sticky; top: 0; z-index: 99; }
+.purchase-banner.show { display: block; animation: fadeIn 0.4s ease; }
 @media(max-width:580px){ .token-bar{font-size:8px;} .token-count{font-size:9px;} .token-login-btn,.dad-van-btn{font-size:7px;padding:9px 9px;} }
 
 .app { position: relative; z-index: 2; max-width: 900px; margin: 0 auto; padding: 20px 16px 60px; }
@@ -296,8 +301,12 @@ footer a:hover { color:var(--teal); }
       </svg>
       <span id="loginBtnLabel">SAVE TOKENS</span>
     </button>
+    <button class="token-logout-btn" id="logoutBtn" onclick="logOut()" style="display:none">LOG OUT</button>
   </div>
 </div>
+
+<!-- PURCHASE SUCCESS BANNER -->
+<div class="purchase-banner" id="purchaseBanner">🔥 YOUR LIFE JUST GOT EASIER. 100 RECIPES LOADED.</div>
 
 <div class="app">
 
@@ -398,8 +407,8 @@ footer a:hover { color:var(--teal); }
       </svg>
     </div>
     <div class="mv-sub">Wear the shame. Share the chaos.</div>
+    <div style="margin-bottom:24px"><a class="mv-seeall" href="https://burntdad.printful.me" target="_blank" rel="noopener">SEE ALL MERCH →</a></div>
     <div class="mv-grid" id="mvGrid"></div>
-    <a class="mv-seeall" href="https://burntdad.printful.me" target="_blank" rel="noopener">SEE ALL MERCH →</a>
     <div style="margin-top:22px;font-family:'VT323',monospace;font-size:16px;color:#806040;line-height:1.8">
       Ships when we stop burning things long enough to fulfill orders.
     </div>
@@ -443,7 +452,7 @@ footer a:hover { color:var(--teal); }
 <!-- DAD VAN PANEL -->
 <div class="dad-van-panel" id="dadVanPanel">
   <div class="van-header">
-    <div class="van-title">🚐 DAD VAN</div>
+    <div class="van-title">📖 RECIPE BOX</div>
     <button class="van-close" onclick="closeDadVan()">✕</button>
   </div>
   <div id="vanContent"></div>
@@ -474,6 +483,34 @@ function updateTokenDisplay() {
   if (el) el.textContent = tokenBalance <= 0 ? 'OUT' : tokenBalance;
   const loginLabel = document.getElementById('loginBtnLabel');
   if (loginLabel && userEmail) loginLabel.textContent = userEmail.split('@')[0];
+  const logoutBtn = document.getElementById('logoutBtn');
+  if (logoutBtn) logoutBtn.style.display = userEmail ? 'inline-flex' : 'none';
+}
+
+// Clear the local session and reload.
+function logOut() {
+  localStorage.removeItem('bd_email');
+  localStorage.removeItem('bd_tokens');
+  location.reload();
+}
+
+// Show the purchase-success banner when returning from Stripe (?purchase=success).
+function handlePurchaseRedirect() {
+  const params = new URLSearchParams(window.location.search);
+  if (params.get('purchase') === 'success') {
+    const banner = document.getElementById('purchaseBanner');
+    if (banner) {
+      banner.classList.add('show');
+      setTimeout(() => banner.classList.remove('show'), 5000);
+    }
+  }
+  // Strip the purchase params so a refresh doesn't re-trigger the banner.
+  if (params.has('purchase')) {
+    params.delete('purchase');
+    params.delete('email');
+    const query = params.toString();
+    history.replaceState({}, document.title, window.location.pathname + (query ? '?' + query : ''));
+  }
 }
 
 // Handle the redirect back from a magic link: /?login=success&email=...
@@ -602,7 +639,7 @@ function closeDadVan() {
 function addToDadVan(recipe) {
   const exists = dadVan.find(r => r.name === recipe.name);
   if (exists) return;
-  dadVan.push({ name: recipe.name, ingredients: recipe.ingredients, difficulty: recipe.difficulty });
+  dadVan.push({ name: recipe.name, ingredients: recipe.ingredients, steps: recipe.steps, difficulty: recipe.difficulty });
   saveState();
   updateVanCount();
   const btn = document.getElementById('vanAddBtn');
@@ -648,14 +685,49 @@ function renderDadVan() {
     <div class="van-shopping-title">SHOPPING LIST (${ingredients.length} ITEMS)</div>
     <div class="van-shop-hint">↗ TAP AN ITEM TO SHOP ON AMAZON</div>
     <ul class="van-ingredient-list">${ingredientsHTML}</ul>
-    <button class="van-print-btn" onclick="printShoppingList()">PRINT LIST</button>`;
+    <button class="van-print-btn" onclick="printRecipeBox()">PRINT</button>`;
 }
-function printShoppingList() {
-  const ingredients = coalateIngredients();
-  const recipes = dadVan.map(r => r.name).join(', ');
-  const items = ingredients.map(ing => `${ing.amounts.join('+') || ''} ${ing.item}`).join('\n');
+// Open a clean, chrome-free printable document: each saved recipe's title,
+// full ingredients, and all cooking steps, plus a Burnt Dad footer.
+function printRecipeBox() {
+  if (!dadVan.length) return;
+  const esc = s => String(s == null ? '' : s).replace(/[&<>]/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;' }[c]));
+  const sections = dadVan.map(r => {
+    const ingredients = (r.ingredients || [])
+      .map(ing => `<li>${esc((ing.amount ? ing.amount + ' ' : '') + ing.item)}</li>`).join('');
+    const steps = (r.steps || [])
+      .map(s => `<li>${esc(s.instruction)}</li>`).join('');
+    return `
+      <section class="recipe">
+        <h2>${esc(r.name)}</h2>
+        <h3>Ingredients</h3>
+        <ul class="ingredients">${ingredients}</ul>
+        ${steps ? `<h3>Steps</h3><ol class="steps">${steps}</ol>` : ''}
+      </section>`;
+  }).join('');
+  const doc = `<!DOCTYPE html><html><head><meta charset="utf-8"><title>Burnt Dad Recipes</title>
+    <style>
+      *{box-sizing:border-box;} body{font-family:Georgia,'Times New Roman',serif;color:#2c1a0e;max-width:680px;margin:0 auto;padding:40px 32px;line-height:1.5;}
+      h1{font-family:Arial,Helvetica,sans-serif;color:#FF5500;font-size:26px;margin:0 0 4px;}
+      .tagline{color:#7a6450;font-style:italic;margin-bottom:28px;}
+      .recipe{margin-bottom:36px;page-break-inside:avoid;}
+      h2{color:#CC4400;font-size:22px;border-bottom:2px solid #e0d4bc;padding-bottom:6px;margin:0 0 12px;}
+      h3{font-family:Arial,Helvetica,sans-serif;font-size:12px;letter-spacing:1px;text-transform:uppercase;color:#7a6450;margin:16px 0 8px;}
+      ul,ol{margin:0 0 8px 22px;padding:0;} li{margin-bottom:6px;} ol.steps li{margin-bottom:10px;}
+      footer{margin-top:40px;border-top:2px solid #e0d4bc;padding-top:14px;text-align:center;color:#7a6450;font-family:Arial,Helvetica,sans-serif;font-size:12px;}
+      @media print{body{padding:0;}}
+    </style></head>
+    <body>
+      <h1>🔥 Burnt Dad Kitchen</h1>
+      <div class="tagline">Written for dads. Tested by kids. Survived by both.</div>
+      ${sections}
+      <footer>Burnt Dad · A Magic Sun LLC Production · burntdad.com</footer>
+    </body></html>`;
   const win = window.open('', '_blank');
-  win.document.write(`<pre style="font-family:monospace;padding:20px">BURNT DAD SHOPPING LIST\n\nRecipes: ${recipes}\n\nIngredients:\n${items}\n\nburntdad.com</pre>`);
+  if (!win) return;
+  win.document.write(doc);
+  win.document.close();
+  win.focus();
   win.print();
 }
 
@@ -1015,6 +1087,7 @@ animatePets();
 
 window.addEventListener('load', () => {
   renderMerchVan();
+  handlePurchaseRedirect();
   const handledLogin = handleLoginRedirect();
   // For a returning visitor (email already stored), refresh the balance from Supabase.
   if (!handledLogin && userEmail) syncTokenBalance(userEmail);
