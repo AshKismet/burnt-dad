@@ -243,6 +243,7 @@ header { text-align: center; padding: 8px 0 28px; }
 
 /* THE MERCH VAN */
 .mv-head { font-size:clamp(13px,3vw,20px); color:var(--sun); text-shadow:3px 3px 0 var(--orange), 6px 6px 0 rgba(0,0,0,0.4); letter-spacing:2px; margin-bottom:10px; }
+.mv-van { font-size:1.7em; display:inline-block; vertical-align:middle; filter:grayscale(1) sepia(1) saturate(4) hue-rotate(65deg) brightness(0.95); }
 .mv-sub { font-family:'VT323',monospace; font-size:18px; color:#c0a080; margin-bottom:26px; line-height:1.6; }
 .mv-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:20px; margin-bottom:26px; }
 .mv-card { background:rgba(0,0,0,0.35); border:3px solid var(--sun); box-shadow:4px 4px 0 var(--orange); padding:22px 16px; text-align:center; display:flex; flex-direction:column; align-items:center; gap:12px; transition:transform .1s ease, box-shadow .1s ease; }
@@ -369,8 +370,8 @@ footer a:hover { color:var(--teal); }
 <!-- THE MERCH VAN -->
 <div id="merch" style="margin-top:24px">
   <div class="pixel-box" style="text-align:center;padding:32px 20px">
-    <div class="mv-head">🚐 THE MERCH VAN 🚐</div>
-    <div class="mv-sub">Wear the shame. Share the chaos.<br>Featured drops from the Burnt Dad store.</div>
+    <div class="mv-head"><span class="mv-van">🚐</span> THE MERCH VAN <span class="mv-van">🚐</span></div>
+    <div class="mv-sub">Wear the shame. Share the chaos.</div>
     <div class="mv-grid" id="mvGrid"></div>
     <a class="mv-seeall" href="https://burntdad.printful.me" target="_blank" rel="noopener">SEE ALL MERCH →</a>
     <div style="margin-top:22px;font-family:'VT323',monospace;font-size:16px;color:#806040;line-height:1.8">
@@ -858,6 +859,7 @@ const FEATURED_MERCH = [
   { name: 'DAD CHAOS HOODIE',              price: '$48', emoji: '🧥', url: 'https://burntdad.printful.me/product/dad-chaos-hoodie' },
   { name: 'GROCERY RUN TOTE BAG',          price: '$22', emoji: '🛍️', url: 'https://burntdad.printful.me/product/grocery-run-tote' },
   { name: 'BURNT DAD DAD HAT',             price: '$26', emoji: '🧢', url: 'https://burntdad.printful.me/product/burnt-dad-hat' },
+  { name: 'OG TOAST STICKER',              price: '$2.50', emoji: '🍞', url: 'https://burntdad.printful.me/product/burnt-dad-og-toast-sticker' },
 ];
 
 function escapeHtml(str) {
