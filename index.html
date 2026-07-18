@@ -79,6 +79,7 @@ font-size: 10px; position: sticky; top: 0; z-index: 100; box-shadow: 0 3px 0 rgb
 .btn-icon { flex-shrink: 0; display: block; image-rendering: pixelated; }
 .icon-env { width: 20px; height: 15px; }
 .icon-van { width: 32px; height: 19px; }
+.icon-pencil { width: 20px; height: 20px; }
 .van-count { position: absolute; top: -8px; right: -8px; background: var(--red); color: white; font-size: 7px; width: 16px; height: 16px; display: flex; align-items: center; justify-content: center; border-radius: 0; }
 @media(max-width:580px){ .token-bar{font-size:8px;} .token-count{font-size:9px;} .token-login-btn,.dad-van-btn{font-size:7px;padding:9px 9px;} }
 
@@ -272,28 +273,21 @@ footer a:hover { color:var(--teal); }
   <div class="token-count">🔥 RECIPES LEFT: <span id="tokenDisplay">10</span></div>
   <div class="token-actions">
     <button class="dad-van-btn" onclick="openDadVan()">
-      <svg class="btn-icon icon-van" viewBox="0 0 30 18" shape-rendering="crispEdges" aria-hidden="true">
-        <!-- body: dark outline, base, top highlight + bottom shadow bands -->
-        <rect x="2" y="2" width="26" height="11" fill="#0b3315"/>
-        <rect x="3" y="3" width="24" height="9" fill="#1b5e20"/>
-        <rect x="3" y="3" width="24" height="2" fill="#2e7d32"/>
-        <rect x="3" y="10" width="24" height="2" fill="#0f421c"/>
-        <!-- retro side accent stripe -->
-        <rect x="11" y="7" width="16" height="1" fill="#43a047"/>
-        <!-- rear door seam -->
-        <rect x="14" y="5" width="1" height="5" fill="#0b3315"/>
-        <!-- windshield: dark frame + light glass -->
-        <rect x="4" y="4" width="7" height="4" fill="#082a11"/>
-        <rect x="5" y="5" width="5" height="2" fill="#9fd8ff"/>
-        <!-- headlight -->
-        <rect x="3" y="9" width="2" height="1" fill="#ffd93d"/>
-        <!-- tires (chunky) + hubs -->
-        <rect x="6" y="12" width="6" height="5" fill="#0a0400"/>
-        <rect x="8" y="14" width="2" height="2" fill="#6b6b6b"/>
-        <rect x="18" y="12" width="6" height="5" fill="#0a0400"/>
-        <rect x="20" y="14" width="2" height="2" fill="#6b6b6b"/>
+      <svg class="btn-icon icon-pencil" viewBox="0 0 20 20" shape-rendering="crispEdges" aria-hidden="true">
+        <!-- eraser -->
+        <rect x="13" y="3" width="4" height="4" fill="#ff6f91"/>
+        <!-- metal ferrule -->
+        <rect x="11" y="5" width="4" height="4" fill="#cfcfcf"/>
+        <!-- yellow body -->
+        <rect x="9" y="7" width="4" height="4" fill="#ffcf3f"/>
+        <rect x="7" y="9" width="4" height="4" fill="#ffcf3f"/>
+        <!-- wood tip -->
+        <rect x="5" y="11" width="4" height="4" fill="#e6c07a"/>
+        <rect x="4" y="13" width="3" height="3" fill="#e6c07a"/>
+        <!-- graphite point -->
+        <rect x="3" y="15" width="2" height="2" fill="#333333"/>
       </svg>
-      DAD VAN <span class="van-count" id="vanCount" style="display:none">0</span>
+      RECIPE BOX <span class="van-count" id="vanCount" style="display:none">0</span>
     </button>
     <button class="token-login-btn" id="loginToggleBtn" onclick="openLoginModal()">
       <svg class="btn-icon icon-env" viewBox="0 0 20 15" shape-rendering="crispEdges" aria-hidden="true">
