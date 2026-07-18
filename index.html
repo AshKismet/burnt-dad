@@ -262,6 +262,29 @@ header { text-align: center; padding: 8px 0 28px; }
 .mv-seeall { display:inline-block; font-family:'Press Start 2P',monospace; font-size:9px; padding:16px 26px; background:transparent; border:3px solid var(--orange); color:var(--orange); text-decoration:none; letter-spacing:2px; cursor:pointer; transition:all .1s; }
 .mv-seeall:hover { background:var(--orange); color:var(--bg); }
 
+/* COOKBOOK WAITLIST */
+.waitlist { text-align:center; padding:36px 24px; }
+.wl-title { font-size:clamp(12px,2.8vw,18px); color:var(--sun); text-shadow:3px 3px 0 var(--orange), 6px 6px 0 rgba(0,0,0,0.4); letter-spacing:2px; line-height:1.6; margin-bottom:12px; }
+.wl-sub { font-family:'VT323',monospace; font-size:19px; color:#c0a080; line-height:1.5; margin-bottom:24px; }
+.wl-form { display:flex; flex-wrap:wrap; gap:12px; justify-content:center; max-width:520px; margin:0 auto; }
+.wl-input { flex:1 1 240px; background:var(--bg2); border:4px solid var(--teal); color:var(--white); font-family:'VT323',monospace; font-size:22px; padding:12px 14px; outline:none; transition:border-color 0.1s; }
+.wl-input::placeholder { color:#4a6080; }
+.wl-input:focus { border-color:var(--sun); }
+.wl-btn { flex:1 1 240px; font-family:'Press Start 2P',monospace; font-size:10px; padding:16px; background:var(--sun); color:var(--bg); border:4px solid var(--orange); box-shadow:4px 4px 0 rgba(0,0,0,0.4); cursor:pointer; transition:all 0.1s; letter-spacing:1px; }
+.wl-btn:hover { background:var(--orange); }
+.wl-btn:active { transform:translate(2px,2px); box-shadow:2px 2px 0 rgba(0,0,0,0.4); }
+.wl-btn:disabled { background:#4a6080; border-color:#2a3a50; color:#8a9ab0; cursor:not-allowed; box-shadow:none; }
+.wl-success { display:none; margin-top:18px; font-family:'Press Start 2P',monospace; font-size:9px; line-height:1.8; color:var(--green); letter-spacing:1px; }
+.wl-success.show { display:block; animation:fadeIn 0.4s ease; }
+
+/* COOKIE CONSENT (EU only) */
+.cookie-bar { display:none; position:fixed; left:0; right:0; bottom:0; z-index:200; background:var(--panel); border-top:3px solid var(--sun); box-shadow:0 -3px 0 rgba(0,0,0,0.4); padding:12px 16px; align-items:center; justify-content:center; gap:14px; flex-wrap:wrap; }
+.cookie-bar.show { display:flex; }
+.cookie-text { font-family:'VT323',monospace; font-size:17px; color:#c0a080; line-height:1.4; max-width:640px; text-align:center; }
+.cookie-text a { color:var(--sun); text-decoration:underline; }
+.cookie-btn { font-family:'Press Start 2P',monospace; font-size:8px; padding:10px 14px; background:var(--sun); color:var(--bg); border:2px solid var(--orange); cursor:pointer; letter-spacing:1px; white-space:nowrap; }
+.cookie-btn:hover { background:var(--orange); }
+
 footer { text-align:center; padding:30px 20px; font-size:7px; color:#3a5070; letter-spacing:2px; line-height:2.2; }
 footer span { color:var(--sun); }
 footer a { color:#406080; text-decoration:none; }
@@ -417,12 +440,31 @@ footer a:hover { color:var(--teal); }
   </div>
 </div>
 
+<!-- COOKBOOK WAITLIST -->
+<div id="waitlist" style="margin-top:24px">
+  <div class="pixel-box waitlist">
+    <div class="wl-title">📖 THE BURNT DAD COOKBOOK IS COMING</div>
+    <div class="wl-sub">Real recipes. Zero judgment.<br>Written for dads. Tested by kids. Survived by both.</div>
+    <div class="wl-form" id="waitlistForm">
+      <input class="wl-input" id="waitlistEmail" type="email" placeholder="your@email.com" autocomplete="email" onkeydown="if(event.key==='Enter')joinWaitlist()">
+      <button class="wl-btn" id="waitlistBtn" onclick="joinWaitlist()">JOIN THE WAITLIST</button>
+    </div>
+    <div class="wl-success" id="waitlistSuccess">🔥 YOU'RE ON THE LIST. WE'LL BE IN TOUCH.</div>
+  </div>
+</div>
+
 <footer>
   <div>© 2026 <span>BURNT DAD</span> · A <span>MAGIC SUN LLC</span> PRODUCTION</div>
   <div>BOOKS · PUBLISHING · FILMS · TELEVISION</div>
   <div style="margin-top:6px;font-size:6px">ALWAYS COOK WITH A GROWN-UP NEARBY ♥ · NO DADS WERE SERIOUSLY HARMED</div>
   <div style="margin-top:8px"><a href="/privacy.html">PRIVACY POLICY</a> · <a href="/terms.html">TERMS OF SERVICE</a></div>
 </footer>
+</div>
+
+<!-- COOKIE CONSENT (EU only) -->
+<div class="cookie-bar" id="cookieBar">
+  <div class="cookie-text">This site uses cookies to save your recipes and token balance. See our <a href="/privacy.html">Privacy Policy</a>.</div>
+  <button class="cookie-btn" onclick="acceptCookies()">GOT IT</button>
 </div>
 
 <!-- PAYWALL MODAL -->
@@ -996,6 +1038,51 @@ function renderMerchVan() {
     </div>`;
   }).join('');
 }
+// ══════════════════════════════════════════════════════════════════
+// COOKBOOK WAITLIST
+// ══════════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════════════
+// COOKIE CONSENT (EU visitors only, shown once)
+// ══════════════════════════════════════════════════════════════════
+function maybeShowCookieBanner() {
+  try {
+    if (localStorage.getItem('bd_cookie_consent')) return;
+    const tz = Intl.DateTimeFormat().resolvedOptions().timeZone || '';
+    if (!tz.startsWith('Europe/')) return;
+    const bar = document.getElementById('cookieBar');
+    if (bar) bar.classList.add('show');
+  } catch (e) {}
+}
+function acceptCookies() {
+  try { localStorage.setItem('bd_cookie_consent', '1'); } catch (e) {}
+  const bar = document.getElementById('cookieBar');
+  if (bar) bar.classList.remove('show');
+}
+
+async function joinWaitlist() {
+  const input = document.getElementById('waitlistEmail');
+  const email = input.value.trim();
+  if (!email || !email.includes('@')) {
+    input.style.borderColor = 'var(--red)';
+    input.focus();
+    setTimeout(() => input.style.borderColor = 'var(--teal)', 1000);
+    return;
+  }
+  const btn = document.getElementById('waitlistBtn');
+  btn.disabled = true;
+  try {
+    await fetch('/api/waitlist', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email })
+    });
+  } catch (e) {}
+  const form = document.getElementById('waitlistForm');
+  if (form) form.style.display = 'none';
+  const success = document.getElementById('waitlistSuccess');
+  if (success) success.classList.add('show');
+}
+
 document.getElementById('mealInput').addEventListener('keydown', e => { if(e.key==='Enter') getRecipe(); });
 
 // Close modals on overlay click
@@ -1095,6 +1182,7 @@ window.addEventListener('load', () => {
   if (!handledLogin && userEmail) syncTokenBalance(userEmail);
   updateTokenDisplay();
   updateVanCount();
+  maybeShowCookieBanner();
 });
 
 // ══════════════════════════════════════════════════════════════════
