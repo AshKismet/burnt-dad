@@ -330,6 +330,8 @@ footer a:hover { color:var(--teal); }
 <div class="pixel-box">
   <div class="section-label">WHAT ARE WE ATTEMPTING TO COOK?</div>
   <input class="meal-input" id="mealInput" type="text" placeholder="pasta, tacos, anything..." maxlength="80" autocomplete="off">
+  <!-- Honeypot: hidden from real users; bots that fill it get rejected server-side. -->
+  <input type="text" id="hpWebsite" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;top:-9999px;width:1px;height:1px;opacity:0;pointer-events:none;">
 
   <div class="filters-row">
     <div class="filter-group">
@@ -765,7 +767,7 @@ async function getRecipe() {
     const res = await fetch('/api/recipe', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ meal, servings, difficulty: selectedDiff, allergies: selectedAllergies, email: userEmail })
+      body: JSON.stringify({ meal, servings, difficulty: selectedDiff, allergies: selectedAllergies, email: userEmail, website: (document.getElementById('hpWebsite') || {}).value || '' })
     });
     const data = await res.json();
     if (data.error === 'rate_limited') { alert("Dad needs a break. Try again in an hour."); document.getElementById('cookBtn').disabled = false; return; }

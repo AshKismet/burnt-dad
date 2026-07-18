@@ -74,7 +74,12 @@ module.exports = async (req, res) => {
     return res.status(429).json({ error: 'rate_limited', message: 'Dad needs a break. Try again in an hour.' });
   }
 
-  const { meal: rawMeal, servings: rawServings, difficulty: rawDifficulty, allergies: rawAllergies, email } = req.body || {};
+  const { meal: rawMeal, servings: rawServings, difficulty: rawDifficulty, allergies: rawAllergies, email, website } = req.body || {};
+
+  // ── Honeypot: real users never see/fill the "website" field; bots do. ─
+  if (typeof website === 'string' && website.trim() !== '') {
+    return res.status(400).json({ error: 'invalid_input', message: 'Tell us what to cook.' });
+  }
 
   // ── Sanitize + validate user input ─────────────────────────────────
   const meal = sanitizeText(rawMeal);
