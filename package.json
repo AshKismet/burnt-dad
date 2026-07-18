@@ -9,5 +9,8 @@
     "resend": "^3.2.0",
     "stripe": "^15.0.0",
     "ws": "^8.18.0"
+  },
+  "devDependencies": {
+    "canvas": "^3.2.3"
   }
 }
