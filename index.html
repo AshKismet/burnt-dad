@@ -243,7 +243,7 @@ header { text-align: center; padding: 8px 0 28px; }
 
 /* THE MERCH VAN */
 .mv-head { font-size:clamp(13px,3vw,20px); color:var(--sun); text-shadow:3px 3px 0 var(--orange), 6px 6px 0 rgba(0,0,0,0.4); letter-spacing:2px; margin-bottom:10px; }
-.mv-van { font-size:1.7em; display:inline-block; vertical-align:middle; filter:grayscale(1) sepia(1) saturate(4) hue-rotate(65deg) brightness(0.95); }
+.mv-van { width:48px; height:29px; display:inline-block; vertical-align:middle; image-rendering:pixelated; }
 .mv-sub { font-family:'VT323',monospace; font-size:18px; color:#c0a080; margin-bottom:26px; line-height:1.6; }
 .mv-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:20px; margin-bottom:26px; }
 .mv-card { background:rgba(0,0,0,0.35); border:3px solid var(--sun); box-shadow:4px 4px 0 var(--orange); padding:22px 16px; text-align:center; display:flex; flex-direction:column; align-items:center; gap:12px; transition:transform .1s ease, box-shadow .1s ease; }
@@ -370,7 +370,39 @@ footer a:hover { color:var(--teal); }
 <!-- THE MERCH VAN -->
 <div id="merch" style="margin-top:24px">
   <div class="pixel-box" style="text-align:center;padding:32px 20px">
-    <div class="mv-head"><span class="mv-van">🚐</span> THE MERCH VAN <span class="mv-van">🚐</span></div>
+    <div class="mv-head">
+      <svg class="mv-van" viewBox="0 0 30 18" shape-rendering="crispEdges" aria-hidden="true">
+        <rect x="2" y="2" width="26" height="11" fill="#0b3315"/>
+        <rect x="3" y="3" width="24" height="9" fill="#1b5e20"/>
+        <rect x="3" y="3" width="24" height="2" fill="#2e7d32"/>
+        <rect x="3" y="10" width="24" height="2" fill="#0f421c"/>
+        <rect x="11" y="7" width="16" height="1" fill="#43a047"/>
+        <rect x="14" y="5" width="1" height="5" fill="#0b3315"/>
+        <rect x="4" y="4" width="7" height="4" fill="#082a11"/>
+        <rect x="5" y="5" width="5" height="2" fill="#9fd8ff"/>
+        <rect x="3" y="9" width="2" height="1" fill="#ffd93d"/>
+        <rect x="6" y="12" width="6" height="5" fill="#0a0400"/>
+        <rect x="8" y="14" width="2" height="2" fill="#6b6b6b"/>
+        <rect x="18" y="12" width="6" height="5" fill="#0a0400"/>
+        <rect x="20" y="14" width="2" height="2" fill="#6b6b6b"/>
+      </svg>
+      THE MERCH VAN
+      <svg class="mv-van" viewBox="0 0 30 18" shape-rendering="crispEdges" aria-hidden="true">
+        <rect x="2" y="2" width="26" height="11" fill="#0b3315"/>
+        <rect x="3" y="3" width="24" height="9" fill="#1b5e20"/>
+        <rect x="3" y="3" width="24" height="2" fill="#2e7d32"/>
+        <rect x="3" y="10" width="24" height="2" fill="#0f421c"/>
+        <rect x="11" y="7" width="16" height="1" fill="#43a047"/>
+        <rect x="14" y="5" width="1" height="5" fill="#0b3315"/>
+        <rect x="4" y="4" width="7" height="4" fill="#082a11"/>
+        <rect x="5" y="5" width="5" height="2" fill="#9fd8ff"/>
+        <rect x="3" y="9" width="2" height="1" fill="#ffd93d"/>
+        <rect x="6" y="12" width="6" height="5" fill="#0a0400"/>
+        <rect x="8" y="14" width="2" height="2" fill="#6b6b6b"/>
+        <rect x="18" y="12" width="6" height="5" fill="#0a0400"/>
+        <rect x="20" y="14" width="2" height="2" fill="#6b6b6b"/>
+      </svg>
+    </div>
     <div class="mv-sub">Wear the shame. Share the chaos.</div>
     <div class="mv-grid" id="mvGrid"></div>
     <a class="mv-seeall" href="https://burntdad.printful.me" target="_blank" rel="noopener">SEE ALL MERCH →</a>
@@ -851,15 +883,15 @@ function toggleAllergy(btn) {
 // Edit names, prices, emojis, and Printful store URLs here.
 // ══════════════════════════════════════════════════════════════════
 const FEATURED_MERCH = [
-  { name: 'THE CLASSIC — "We Ate It" Tee', price: '$28', emoji: '👕', url: 'https://burntdad.printful.me/product/we-ate-it-tee' },
-  { name: 'THE BURNT DAD APRON',           price: '$34', emoji: '🍳', url: 'https://burntdad.printful.me/product/burnt-dad-apron' },
-  { name: 'BELLA & MAXI STICKER PACK',     price: '$12', emoji: '🔥', url: 'https://burntdad.printful.me/product/sticker-pack' },
-  { name: "LITTLE CHEF KIDS TEE",          price: '$24', emoji: '🧒', url: 'https://burntdad.printful.me/product/little-chef-kids-tee' },
-  { name: '"BURNT DAD" COFFEE MUG',        price: '$16', emoji: '☕', url: 'https://burntdad.printful.me/product/burnt-dad-mug' },
-  { name: 'DAD CHAOS HOODIE',              price: '$48', emoji: '🧥', url: 'https://burntdad.printful.me/product/dad-chaos-hoodie' },
-  { name: 'GROCERY RUN TOTE BAG',          price: '$22', emoji: '🛍️', url: 'https://burntdad.printful.me/product/grocery-run-tote' },
-  { name: 'BURNT DAD DAD HAT',             price: '$26', emoji: '🧢', url: 'https://burntdad.printful.me/product/burnt-dad-hat' },
-  { name: 'OG TOAST STICKER',              price: '$2.50', emoji: '🍞', url: 'https://burntdad.printful.me/product/burnt-dad-og-toast-sticker' },
+  { name: 'Cooked For Kids Today Toast Dad Tee',              price: '$36',   emoji: '👕', url: 'https://burntdad.printful.me/product/burnt-dad-cooked-for-kids-today-toast-dad' },
+  { name: "Bella + Maxi Today's Menu Youth T-Shirt",         price: '$20',   emoji: '🧒', url: 'https://burntdad.printful.me/product/burnt-dad-bella-maxi-todays-menu-youth-t-shirt' },
+  { name: 'Grocery Pickup Heavy Blend Zip Hoodie',           price: '$55',   emoji: '🧥', url: 'https://burntdad.printful.me/product/burnt-dad-grocery-pickup-heavy-blend-zip-hoodie' },
+  { name: 'Go Away Kids Coffee Mug',                         price: '$12',   emoji: '☕', url: 'https://burntdad.printful.me/product/burnt-dad-parent-coffee-mug-go-away-kids-i-need-coffee' },
+  { name: 'Bella + Maxi Emblem Youth Kitchen Crew Sweatshirt', price: '$35', emoji: '👚', url: 'https://burntdad.printful.me/product/burnt-dad-bella-maxi-emblem-youth-kitchen-crew-sweatshirt' },
+  { name: 'Maxi Making Toast Tee',                           price: '$38',   emoji: '🐶', url: 'https://burntdad.printful.me/product/burnt-toast-maxi-making-toast-tee' },
+  { name: 'Blueberry Bella + Maxi Baby Onesie',              price: '$20',   emoji: '👶', url: 'https://burntdad.printful.me/product/burnt-dad-blueberry-bella-maxi-baby-onesie' },
+  { name: 'Too Much Crap Tote',                              price: '$22',   emoji: '🛍️', url: 'https://burntdad.printful.me/product/burnt-dad-too-much-crap-tote' },
+  { name: 'OG Toast Sticker',                                price: '$2.50', emoji: '🍞', url: 'https://burntdad.printful.me/product/burnt-dad-og-toast-sticker' },
 ];
 
 function escapeHtml(str) {
