@@ -915,18 +915,27 @@ function merchImgFallback(img) {
   img.src = MERCH_PLACEHOLDER;
 }
 
-// Match a featured product to a Printful product by normalized name.
-function normMerchName(s) {
-  return String(s || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+// Slug from a FEATURED_MERCH url: the last path segment after the final slash.
+function slugFromUrl(url) {
+  const path = String(url || '').split('#')[0].split('?')[0];
+  const parts = path.split('/').filter(Boolean);
+  return (parts.length ? parts[parts.length - 1] : '').toLowerCase();
 }
-function findMerchThumb(products, name) {
-  const target = normMerchName(name);
-  if (!target) return null;
-  let hit = products.find(p => normMerchName(p.name) === target);
-  if (!hit) hit = products.find(p => {
-    const pn = normMerchName(p.name);
-    return pn && (pn.includes(target) || target.includes(pn));
-  });
+// Printful-style slug from a product name: lowercase, spaces → hyphens,
+// other special chars removed, then collapse/trim hyphens.
+function merchSlug(name) {
+  return String(name || '')
+    .toLowerCase()
+    .replace(/\s+/g, '-')
+    .replace(/[^a-z0-9-]/g, '')
+    .replace(/-+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
+// Match a featured product to a Printful product by slug.
+function findMerchThumb(products, item) {
+  const targetSlug = slugFromUrl(item.url);
+  if (!targetSlug) return null;
+  const hit = products.find(p => merchSlug(p.name) === targetSlug);
   return hit ? hit.thumbnail_url : null;
 }
 
@@ -940,7 +949,7 @@ async function renderMerchVan() {
       <div class="mv-name">${escapeHtml(p.name)}</div>
       <a class="mv-buy" href="${encodeURI(p.url)}" target="_blank" rel="noopener">BUY NOW</a>
     </div>`).join('');
-  // Enrich with real Printful thumbnails, matched by product name.
+  // Enrich with real Printful thumbnails, matched by URL slug.
   try {
     const res = await fetch('/api/products');
     if (!res.ok) return;
@@ -949,7 +958,7 @@ async function renderMerchVan() {
     if (!products.length) return;
     const imgs = grid.querySelectorAll('.mv-thumb');
     FEATURED_MERCH.forEach((p, i) => {
-      const thumb = findMerchThumb(products, p.name);
+      const thumb = findMerchThumb(products, p);
       if (thumb && imgs[i]) imgs[i].src = thumb;
     });
   } catch (e) {}
