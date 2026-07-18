@@ -132,6 +132,16 @@ header { text-align: center; padding: 8px 0 28px; }
 .cook-btn:active { transform: translate(4px,4px); box-shadow: 2px 2px 0 var(--orange); }
 .cook-btn:disabled { background: #4a6080; border-color: #2a3a50; box-shadow: none; cursor: not-allowed; color: #8a9ab0; }
 
+/* HOW IT WORKS */
+.how-title { font-size: clamp(11px,2.5vw,16px); color: var(--sun); text-shadow: 3px 3px 0 var(--orange), 6px 6px 0 rgba(0,0,0,0.4); letter-spacing: 2px; margin-bottom: 24px; }
+.how-grid { display: flex; align-items: center; justify-content: center; gap: 10px; flex-wrap: wrap; }
+.how-step { flex: 1 1 180px; max-width: 220px; display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 18px 12px; background: rgba(0,0,0,0.25); border: 2px solid rgba(255,140,0,0.3); }
+.how-icon { font-size: 40px; line-height: 1; filter: drop-shadow(2px 2px 0 rgba(0,0,0,0.4)); }
+.how-num { font-family: 'Press Start 2P', monospace; font-size: 13px; color: var(--bg); background: var(--sun); width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; box-shadow: 3px 3px 0 var(--orange); }
+.how-label { font-family: 'Press Start 2P', monospace; font-size: 8px; color: var(--white); line-height: 1.7; letter-spacing: 1px; }
+.how-arrow { font-family: 'Press Start 2P', monospace; font-size: 18px; color: var(--orange); flex: 0 0 auto; }
+@media (max-width: 620px) { .how-arrow { display: none; } .how-step { flex-basis: 100%; max-width: none; } }
+
 /* LOADING */
 .loading { text-align: center; padding: 40px 20px; background: var(--panel); border: 4px solid var(--sun); box-shadow: 4px 4px 0 var(--orange); margin-bottom: 20px; }
 .pixel-loader { display: inline-flex; gap: 6px; margin-bottom: 20px; }
@@ -393,6 +403,32 @@ footer a:hover { color:var(--teal); }
   <div class="book-cta-title">🔥 BURNT DAD COOKBOOKS 🔥</div>
   <div class="book-cta-text">Nailed it? This recipe might be in the upcoming Burnt Dad cookbook series. Written for dads. Tested by kids. Survived by both.</div>
   <button class="cook-btn" style="max-width:340px;margin:0 auto;display:block;font-size:9px;padding:14px" onclick="alert('Cookbook waitlist coming soon!')">JOIN THE COOKBOOK WAITLIST</button>
+</div>
+
+<!-- HOW IT WORKS -->
+<div id="how" style="margin-top:24px">
+  <div class="pixel-box" style="text-align:center;padding:32px 20px">
+    <div class="how-title">⚡ HOW IT WORKS ⚡</div>
+    <div class="how-grid">
+      <div class="how-step">
+        <div class="how-icon">⌨️</div>
+        <div class="how-num">1</div>
+        <div class="how-label">TYPE WHAT YOU WANT TO COOK</div>
+      </div>
+      <div class="how-arrow">▶</div>
+      <div class="how-step">
+        <div class="how-icon">🍳</div>
+        <div class="how-num">2</div>
+        <div class="how-label">GET A RECIPE IN SECONDS</div>
+      </div>
+      <div class="how-arrow">▶</div>
+      <div class="how-step">
+        <div class="how-icon">🛒</div>
+        <div class="how-num">3</div>
+        <div class="how-label">ADD INGREDIENTS TO YOUR SHOPPING LIST</div>
+      </div>
+    </div>
+  </div>
 </div>
 
 <!-- THE MERCH VAN -->
