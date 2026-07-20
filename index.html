@@ -572,6 +572,10 @@ function handlePurchaseRedirect() {
         // Not logged in: keep the banner up and offer to save their tokens by email.
         const save = document.getElementById('pbSave');
         if (save) save.style.display = 'block';
+        // Prefill with the email Stripe captured so they don't save a different one.
+        const prefill = params.get('email');
+        const input = document.getElementById('pbEmail');
+        if (prefill && input) input.value = prefill;
       }
     }
   }
