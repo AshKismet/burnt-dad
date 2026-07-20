@@ -86,6 +86,15 @@ font-size: 10px; position: sticky; top: 0; z-index: 100; box-shadow: 0 3px 0 rgb
 /* PURCHASE SUCCESS BANNER */
 .purchase-banner { display: none; text-align: center; font-family: 'Press Start 2P', monospace; font-size: 9px; line-height: 1.9; letter-spacing: 1px; color: #06240d; background: var(--green); border-bottom: 3px solid #2d5a1b; padding: 14px 16px; box-shadow: 0 3px 0 rgba(0,0,0,0.4); position: sticky; top: 0; z-index: 99; }
 .purchase-banner.show { display: block; animation: fadeIn 0.4s ease; }
+.pb-save { margin-top: 12px; }
+.pb-save-text { font-family: 'Press Start 2P', monospace; font-size: 8px; line-height: 1.7; margin-bottom: 12px; color: #06240d; }
+.pb-save-form { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
+.pb-input { font-family: 'VT323', monospace; font-size: 18px; padding: 8px 10px; background: #0d1f10; border: 2px solid #06240d; color: #eafff0; outline: none; width: 220px; max-width: 70vw; }
+.pb-input:focus { border-color: #1a0800; }
+.pb-btn { font-family: 'Press Start 2P', monospace; font-size: 8px; padding: 8px 14px; background: #06240d; color: #eafff0; border: 2px solid #06240d; cursor: pointer; letter-spacing: 1px; }
+.pb-btn:hover { background: #0a3315; }
+.pb-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.pb-save-done { font-family: 'Press Start 2P', monospace; font-size: 9px; letter-spacing: 1px; color: #06240d; }
 @media(max-width:580px){ .token-bar{font-size:8px;} .token-count{font-size:9px;} .token-login-btn,.dad-van-btn{font-size:7px;padding:9px 9px;} }
 
 .app { position: relative; z-index: 2; max-width: 900px; margin: 0 auto; padding: 20px 16px 60px; }
@@ -330,7 +339,17 @@ footer a:hover { color:var(--teal); }
 </div>
 
 <!-- PURCHASE SUCCESS BANNER -->
-<div class="purchase-banner" id="purchaseBanner">🔥 YOUR LIFE JUST GOT EASIER. 100 RECIPES LOADED.</div>
+<div class="purchase-banner" id="purchaseBanner">
+  <div class="pb-msg">🔥 YOUR LIFE JUST GOT EASIER. 100 RECIPES LOADED.</div>
+  <div class="pb-save" id="pbSave" style="display:none">
+    <div class="pb-save-text">SAVE YOUR TOKENS: enter your email so they follow you everywhere.</div>
+    <div class="pb-save-form" id="pbSaveForm">
+      <input class="pb-input" id="pbEmail" type="email" placeholder="your@email.com" autocomplete="email" onkeydown="if(event.key==='Enter')savePurchaseEmail()">
+      <button class="pb-btn" id="pbBtn" onclick="savePurchaseEmail()">SAVE</button>
+    </div>
+    <div class="pb-save-done" id="pbSaveDone" style="display:none">📬 CHECK YOUR EMAIL</div>
+  </div>
+</div>
 
 <div class="app">
 
@@ -546,7 +565,14 @@ function handlePurchaseRedirect() {
     const banner = document.getElementById('purchaseBanner');
     if (banner) {
       banner.classList.add('show');
-      setTimeout(() => banner.classList.remove('show'), 5000);
+      if (userEmail) {
+        // Already logged in: just celebrate, then auto-dismiss.
+        setTimeout(() => banner.classList.remove('show'), 5000);
+      } else {
+        // Not logged in: keep the banner up and offer to save their tokens by email.
+        const save = document.getElementById('pbSave');
+        if (save) save.style.display = 'block';
+      }
     }
   }
   // Strip the purchase params so a refresh doesn't re-trigger the banner.
@@ -556,6 +582,34 @@ function handlePurchaseRedirect() {
     const query = params.toString();
     history.replaceState({}, document.title, window.location.pathname + (query ? '?' + query : ''));
   }
+}
+
+// Save-your-tokens prompt from the purchase-success banner: send a magic link.
+async function savePurchaseEmail() {
+  const input = document.getElementById('pbEmail');
+  const email = input.value.trim();
+  if (!email || !email.includes('@')) {
+    input.style.borderColor = 'var(--red)';
+    input.focus();
+    setTimeout(() => input.style.borderColor = '#06240d', 1000);
+    return;
+  }
+  const btn = document.getElementById('pbBtn');
+  btn.disabled = true;
+  try {
+    await fetch('/api/auth', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, action: 'send-link' })
+    });
+  } catch (e) {}
+  userEmail = email;
+  saveState();
+  updateTokenDisplay();
+  const form = document.getElementById('pbSaveForm');
+  if (form) form.style.display = 'none';
+  const done = document.getElementById('pbSaveDone');
+  if (done) done.style.display = 'block';
 }
 
 // Handle the redirect back from a magic link: /?login=success&email=...
