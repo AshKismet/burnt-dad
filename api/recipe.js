@@ -133,7 +133,7 @@ Rules: steps simple and safe for kids; easy means minimal knife work; be encoura
   try {
     const response = await anthropic.messages.create({
       model: 'claude-sonnet-5',
-      max_tokens: 1000,
+      max_tokens: 2000,
       messages: [{ role: 'user', content: prompt }]
     });
     const rawText = (response.content || []).map(b => b.text || '').join(''); // TEMP: remove after debugging
