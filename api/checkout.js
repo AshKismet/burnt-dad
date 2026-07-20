@@ -38,8 +38,15 @@ module.exports = async (req, res) => {
       const email = session.customer_details?.email || session.metadata?.email || null;
       if (email) {
         const { data: user } = await supabase.from('users').select('token_balance').eq('email', email).single();
-        const currentBalance = user?.token_balance || 0;
-        await supabase.from('users').upsert({ email, token_balance: currentBalance + TOKENS_PER_PACK });
+        let creditError;
+        if (user) {
+          // Existing user: UPDATE by email avoids the upsert primary-key 409 conflict.
+          const newBalance = (user.token_balance || 0) + TOKENS_PER_PACK;
+          ({ error: creditError } = await supabase.from('users').update({ token_balance: newBalance }).eq('email', email));
+        } else {
+          ({ error: creditError } = await supabase.from('users').insert({ email, token_balance: TOKENS_PER_PACK }));
+        }
+        if (creditError) console.error('token credit error:', creditError.message);
       }
     }
     return res.status(200).json({ received: true });
