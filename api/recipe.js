@@ -129,12 +129,17 @@ Respond ONLY with valid JSON, no markdown:
 {"name":"","description":"","difficulty":"${difficulty}","time_minutes":0,"servings":${servings},"allergen_warnings":"","ingredients":[{"amount":"","item":""}],"steps":[{"instruction":"","timer_seconds":0}],"fun_tip":"","cookbook_teaser":""}
 Rules: steps simple and safe for kids; easy means minimal knife work; be encouraging, warm, and a little funny.`;
 
+  console.log('[TEMP] recipe difficulty:', difficulty); // TEMP: remove after debugging
   try {
     const response = await anthropic.messages.create({
       model: 'claude-sonnet-5',
       max_tokens: 1000,
       messages: [{ role: 'user', content: prompt }]
     });
+    const rawText = (response.content || []).map(b => b.text || '').join(''); // TEMP: remove after debugging
+    console.log('[TEMP] Anthropic raw text:', rawText); // TEMP: remove after debugging
+    try { JSON.parse(rawText.replace(/```json|```/g, '').trim()); } // TEMP: remove after debugging
+    catch (parseErr) { console.error('[TEMP] JSON parse error:', parseErr.message); } // TEMP: remove after debugging
     return res.status(200).json(response);
   } catch (err) {
     console.error('Anthropic API error:', err.message);
