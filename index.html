@@ -110,6 +110,7 @@ header { text-align: center; padding: 8px 0 28px; }
 .meal-input { width: 100%; background: var(--bg2); border: 4px solid var(--teal); color: var(--white); font-family: 'VT323', monospace; font-size: 24px; padding: 14px 16px; outline: none; transition: border-color 0.1s; letter-spacing: 1px; margin-bottom: 16px; }
 .meal-input::placeholder { color: #4a6080; }
 .meal-input:focus { border-color: var(--sun); }
+.char-counter { font-family: 'VT323', monospace; font-size: 17px; color: var(--red); text-align: right; margin: -8px 0 14px; letter-spacing: 1px; }
 
 .filters-row { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; }
 .filter-group { flex: 1; min-width: 180px; }
@@ -352,7 +353,8 @@ footer a:hover { color:var(--teal); }
 
 <div class="pixel-box">
   <div class="section-label">WHAT ARE WE ATTEMPTING TO COOK?</div>
-  <input class="meal-input" id="mealInput" type="text" placeholder="pasta, tacos, anything..." maxlength="80" autocomplete="off">
+  <input class="meal-input" id="mealInput" type="text" placeholder="pasta, tacos, anything..." maxlength="500" autocomplete="off">
+  <div class="char-counter" id="charCounter" style="display:none"></div>
   <!-- Honeypot: hidden from real users; bots that fill it get rejected server-side. -->
   <input type="text" id="hpWebsite" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;top:-9999px;width:1px;height:1px;opacity:0;pointer-events:none;">
 
@@ -361,8 +363,7 @@ footer a:hover { color:var(--teal); }
       <span class="filter-label">DIFFICULTY</span>
       <div class="filter-pills">
         <button class="pill active" data-val="easy" onclick="toggleDiff(this)">EASY</button>
-        <button class="pill" data-val="medium" onclick="toggleDiff(this)">MEDIUM</button>
-        <button class="pill" data-val="hard" onclick="toggleDiff(this)">HARD</button>
+        <button class="pill" data-val="impressive" onclick="toggleDiff(this)">IMPRESSIVE</button>
       </div>
     </div>
     <div class="filter-group">
@@ -810,11 +811,13 @@ async function getRecipe() {
   // conditions (rate limit / no tokens / invalid input), { recipe } on success,
   // or throws so the caller can retry / fall back to a demo.
   async function requestRecipe(difficulty, withEmail = true) {
+    // "Impressive" is a UI label; the API expects the medium difficulty level.
+    const apiDifficulty = difficulty === 'impressive' ? 'medium' : difficulty;
     const res = await fetch('/api/recipe', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       // The retry omits email so the server doesn't decrement a second token — 1 token per recipe.
-      body: JSON.stringify({ meal, servings, difficulty, allergies: selectedAllergies, email: withEmail ? userEmail : null, website: (document.getElementById('hpWebsite') || {}).value || '' })
+      body: JSON.stringify({ meal, servings, difficulty: apiDifficulty, allergies: selectedAllergies, email: withEmail ? userEmail : null, website: (document.getElementById('hpWebsite') || {}).value || '' })
     });
     const data = await res.json();
     if (data.error === 'rate_limited' || data.error === 'no_tokens' || data.error === 'invalid_input') {
@@ -1008,7 +1011,7 @@ function changeServings(delta) {
   if (currentRecipe) renderIngredients(currentRecipe.ingredients);
 }
 function toggleDiff(btn) {
-  document.querySelectorAll('.pill[data-val="easy"],.pill[data-val="medium"],.pill[data-val="hard"]').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.pill[data-val="easy"],.pill[data-val="impressive"]').forEach(p => p.classList.remove('active'));
   btn.classList.add('active'); selectedDiff = btn.dataset.val;
 }
 function toggleAllergy(btn) {
@@ -1112,6 +1115,17 @@ async function joinWaitlist() {
 }
 
 document.getElementById('mealInput').addEventListener('keydown', e => { if(e.key==='Enter') getRecipe(); });
+// Character counter: only warn once past 460 of the 500-char limit.
+document.getElementById('mealInput').addEventListener('input', e => {
+  const len = e.target.value.length;
+  const counter = document.getElementById('charCounter');
+  if (len > 460) {
+    counter.textContent = `${len}/500`;
+    counter.style.display = 'block';
+  } else {
+    counter.style.display = 'none';
+  }
+});
 
 // Close modals on overlay click
 document.getElementById('paywallModal').addEventListener('click', e => { if(e.target===e.currentTarget) closePaywall(); });

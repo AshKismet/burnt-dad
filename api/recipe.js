@@ -9,7 +9,7 @@ const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SER
 
 const rateLimitStore = {};
 
-const MAX_MEAL_LENGTH = 200;
+const MAX_MEAL_LENGTH = 500;
 const DIFFICULTIES = ['easy', 'medium', 'hard'];
 
 // Patterns that signal an attempt to steer the model rather than name a dish.
