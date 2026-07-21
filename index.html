@@ -95,7 +95,7 @@ font-size: 10px; position: sticky; top: 0; z-index: 100; box-shadow: 0 3px 0 rgb
 .pb-btn:hover { background: #0a3315; }
 .pb-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 .pb-save-done { font-family: 'Press Start 2P', monospace; font-size: 9px; letter-spacing: 1px; color: #06240d; }
-@media(max-width:580px){ .token-bar{font-size:8px;} .token-count{font-size:9px;} .token-login-btn,.dad-van-btn{font-size:7px;padding:9px 9px;} }
+@media(max-width:580px){ .token-bar{font-size:8px;flex-wrap:wrap;justify-content:center;gap:8px;padding:10px 12px;} .token-count{font-size:9px;width:100%;text-align:center;} .token-actions{flex-wrap:wrap;justify-content:center;gap:8px;width:100%;} .token-login-btn,.dad-van-btn{font-size:7px;padding:9px 9px;} .token-logout-btn{font-size:6px;padding:8px 8px;} }
 
 .app { position: relative; z-index: 2; max-width: 900px; margin: 0 auto; padding: 20px 16px 60px; }
 
@@ -275,6 +275,7 @@ header { text-align: center; padding: 8px 0 28px; }
 /* COOKBOOK WAITLIST */
 .waitlist { text-align:center; padding:36px 24px; }
 .wl-title { font-size:clamp(12px,2.8vw,18px); color:var(--white); letter-spacing:2px; line-height:1.6; margin-bottom:12px; }
+.wl-utensil { display:inline-block; filter:grayscale(1) sepia(1) saturate(7) hue-rotate(315deg) brightness(1.02); }
 .wl-sub { font-family:'VT323',monospace; font-size:19px; color:#c0a080; line-height:1.5; margin-bottom:24px; }
 .wl-form { display:flex; flex-wrap:wrap; gap:12px; justify-content:center; max-width:520px; margin:0 auto; }
 .wl-input { flex:1 1 240px; background:var(--bg2); border:4px solid var(--teal); color:var(--white); font-family:'VT323',monospace; font-size:22px; padding:12px 14px; outline:none; transition:border-color 0.1s; }
@@ -463,7 +464,7 @@ footer a:hover { color:var(--teal); }
 <!-- COOKBOOK WAITLIST -->
 <div id="waitlist" style="margin-top:24px">
   <div class="pixel-box waitlist">
-    <div class="wl-title">📖 THE BURNT DAD COOKBOOK IS COMING</div>
+    <div class="wl-title"><span class="wl-utensil">🥄</span> THE BURNT DAD COOKBOOK IS COMING <span class="wl-utensil">🥄</span></div>
     <div class="wl-sub">Real recipes. Zero judgment.<br>Written for dads. Tested by kids. Survived by both.</div>
     <div class="wl-form" id="waitlistForm">
       <input class="wl-input" id="waitlistEmail" type="email" placeholder="your@email.com" autocomplete="email" onkeydown="if(event.key==='Enter')joinWaitlist()">
