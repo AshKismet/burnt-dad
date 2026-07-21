@@ -4,8 +4,11 @@
 //
 // Required env: MAILCHIMP_API_KEY
 
+const crypto = require('crypto');
+
 const LIST_ID = 'ca8ad32200';
 const MAILCHIMP_URL = `https://us9.api.mailchimp.com/3.0/lists/${LIST_ID}/members`;
+const SIGNUP_TAG = 'Burnt Dad';
 
 module.exports = async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', 'https://burntdad.com');
@@ -32,14 +35,25 @@ module.exports = async (req, res) => {
     const mcRes = await fetch(MAILCHIMP_URL, {
       method: 'POST',
       headers: { 'Authorization': auth, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email_address: email.trim(), status: 'subscribed' })
+      body: JSON.stringify({ email_address: email.trim(), status: 'subscribed', tags: [SIGNUP_TAG] })
     });
     const data = await mcRes.json().catch(() => ({}));
 
     if (mcRes.ok) return res.status(200).json({ ok: true });
 
-    // Already subscribed is a success from the visitor's point of view.
+    // Already subscribed: the tags field above only applies on create, so tag them
+    // explicitly via the tags endpoint, then treat it as success.
     if (data && data.title === 'Member Exists') {
+      try {
+        const hash = crypto.createHash('md5').update(email.trim().toLowerCase()).digest('hex');
+        await fetch(`${MAILCHIMP_URL}/${hash}/tags`, {
+          method: 'POST',
+          headers: { 'Authorization': auth, 'Content-Type': 'application/json' },
+          body: JSON.stringify({ tags: [{ name: SIGNUP_TAG, status: 'active' }] })
+        });
+      } catch (tagErr) {
+        console.error('Mailchimp tag error:', tagErr.message);
+      }
       return res.status(200).json({ ok: true, already: true });
     }
 
