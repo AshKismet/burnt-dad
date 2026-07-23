@@ -241,10 +241,10 @@ header { text-align: center; padding: 8px 0 28px; }
 .van-recipe-name { font-size:8px; color:var(--sun); margin-bottom:6px; }
 .van-recipe-remove { font-family:'VT323',monospace; font-size:14px; color:var(--red); cursor:pointer; background:none; border:none; float:right; }
 .van-divider { border:none; border-top:2px solid rgba(255,140,0,0.2); margin:16px 0; }
-.van-order-btn { width:100%; font-family:'Press Start 2P',monospace; font-size:8px; padding:14px; background:#FF9900; color:#000; border:none; cursor:pointer; margin-bottom:10px; letter-spacing:1px; }
-.van-order-btn:hover { background:#FFAD33; }
-.van-print-btn { width:100%; font-family:'Press Start 2P',monospace; font-size:7px; padding:12px; background:transparent; border:2px solid var(--white); color:var(--white); cursor:pointer; }
-.van-print-btn:hover { background:var(--white); color:var(--bg); }
+.van-print-btn { width:100%; font-family:'Press Start 2P',monospace; font-size:8px; padding:30px 14px; background:#FF9900; color:#000; border:none; cursor:pointer; margin-bottom:10px; letter-spacing:1px; }
+.van-print-btn:hover { background:#FFAD33; }
+.van-order-btn { width:100%; font-family:'Press Start 2P',monospace; font-size:7px; padding:12px; background:transparent; border:2px solid var(--white); color:var(--white); cursor:pointer; }
+.van-order-btn:hover { background:var(--white); color:var(--bg); }
 
 /* BOOK CTA */
 .book-cta { text-align:center; padding:24px 20px; background:linear-gradient(135deg,rgba(255,107,53,0.15),rgba(255,217,61,0.1)); border:4px solid var(--orange); box-shadow:4px 4px 0 rgba(0,0,0,0.4); margin-top:24px; }
@@ -774,8 +774,8 @@ function renderDadVan() {
   el.innerHTML = `
     <div>${recipesHTML}</div>
     <hr class="van-divider">
-    <button class="van-order-btn" onclick="groceryOrderNow()">GROCERY ORDER NOW</button>
-    <button class="van-print-btn" onclick="printRecipeBox()">PRINT INGREDIENTS AND RECIPE</button>`;
+    <button class="van-print-btn" onclick="printRecipeBox()">PRINT INGREDIENTS AND RECIPE</button>
+    <button class="van-order-btn" onclick="groceryOrderNow()">GROCERY ORDER NOW</button>`;
 }
 // Open every saved ingredient as an Amazon search (one tab each), using our affiliate tag.
 function groceryOrderNow() {
