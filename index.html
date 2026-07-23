@@ -236,19 +236,13 @@ header { text-align: center; padding: 8px 0 28px; }
 .van-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:20px; }
 .van-title { font-size:11px; color:var(--sun); }
 .van-close { font-family:'VT323',monospace; font-size:24px; color:var(--orange); cursor:pointer; background:none; border:none; }
-.van-empty { font-family:'VT323',monospace; font-size:18px; color:#406080; text-align:center; padding:40px 0; line-height:1.8; }
+.van-empty { font-family:'VT323',monospace; font-size:18px; color:var(--white); text-align:center; padding:40px 0; line-height:1.8; }
 .van-recipe-item { background:var(--bg2); border:2px solid rgba(255,140,0,0.3); padding:12px; margin-bottom:10px; }
 .van-recipe-name { font-size:8px; color:var(--sun); margin-bottom:6px; }
 .van-recipe-remove { font-family:'VT323',monospace; font-size:14px; color:var(--red); cursor:pointer; background:none; border:none; float:right; }
 .van-divider { border:none; border-top:2px solid rgba(255,140,0,0.2); margin:16px 0; }
-.van-shopping-title { font-size:8px; color:var(--teal); margin-bottom:12px; }
-.van-ingredient-list { list-style:none; margin-bottom:16px; }
-.van-ingredient-list li { border-bottom:1px solid rgba(255,255,255,0.05); }
-.van-ing-link { display:flex; justify-content:space-between; align-items:center; gap:10px; text-decoration:none; font-family:'VT323',monospace; font-size:17px; color:var(--white); padding:6px 4px; transition:color .15s ease, background .15s ease; }
-.van-ing-link:hover { color:#FFAD33; background:rgba(255,153,0,0.08); }
-.van-ing-cart { font-size:11px; color:var(--sun); opacity:0.45; flex-shrink:0; }
-.van-ing-link:hover .van-ing-cart { opacity:1; }
-.van-shop-hint { font-family:'VT323',monospace; font-size:14px; color:var(--ink-muted,#7a6450); margin:-6px 0 12px; letter-spacing:1px; }
+.van-order-btn { width:100%; font-family:'Press Start 2P',monospace; font-size:8px; padding:14px; background:#FF9900; color:#000; border:none; cursor:pointer; margin-bottom:10px; letter-spacing:1px; }
+.van-order-btn:hover { background:#FFAD33; }
 .van-print-btn { width:100%; font-family:'Press Start 2P',monospace; font-size:7px; padding:12px; background:transparent; border:2px solid var(--white); color:var(--white); cursor:pointer; }
 .van-print-btn:hover { background:var(--white); color:var(--bg); }
 
@@ -772,24 +766,24 @@ function renderDadVan() {
     el.innerHTML = `<div class="van-empty">VAN IS EMPTY.<br>GENERATE A RECIPE<br>AND ADD IT HERE.<br><br>BELLA LOOKS CONCERNED.</div>`;
     return;
   }
-  const ingredients = coalateIngredients();
   const recipesHTML = dadVan.map(r => `
     <div class="van-recipe-item">
       <button class="van-recipe-remove" onclick="removeFromVan('${r.name.replace(/'/g,"\\'")}')">✕</button>
       <div class="van-recipe-name">${r.name}</div>
     </div>`).join('');
-  const ingredientsHTML = ingredients.map(ing => {
-    const amount = ing.amounts.length ? ing.amounts.join(' + ') + ' ' : '';
-    const url = `https://www.amazon.com/s?k=${encodeURIComponent(ing.item)}&tag=${AMAZON_TAG}`;
-    return `<li><a class="van-ing-link" href="${url}" target="_blank" rel="noopener"><span>${amount}${ing.item}</span><span class="van-ing-cart">🛒</span></a></li>`;
-  }).join('');
   el.innerHTML = `
     <div>${recipesHTML}</div>
     <hr class="van-divider">
-    <div class="van-shopping-title">SHOPPING LIST (${ingredients.length} ITEMS)</div>
-    <div class="van-shop-hint">↗ TAP AN ITEM TO SHOP ON AMAZON</div>
-    <ul class="van-ingredient-list">${ingredientsHTML}</ul>
+    <button class="van-order-btn" onclick="groceryOrderNow()">GROCERY ORDER NOW</button>
     <button class="van-print-btn" onclick="printRecipeBox()">PRINT INGREDIENTS AND RECIPE</button>`;
+}
+// Open every saved ingredient as an Amazon search (one tab each), using our affiliate tag.
+function groceryOrderNow() {
+  const ingredients = coalateIngredients();
+  if (!ingredients.length) return;
+  ingredients.forEach(ing => {
+    window.open(`https://www.amazon.com/s?k=${encodeURIComponent(ing.item)}&tag=${AMAZON_TAG}`, '_blank', 'noopener');
+  });
 }
 // Open a clean, chrome-free printable document: each saved recipe's title,
 // full ingredients, and all cooking steps, plus a Burnt Dad footer.
